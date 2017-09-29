@@ -28,8 +28,8 @@ def parse_args():
                                          metavar="PID",
                                          type=int)
     searches_argument_group.add_argument("--index", "-i",
-                                         help="Use the Ith matching process, numbered starting at 0",
-                                         metavar="I",
+                                         help="After finding processes, take the Nth match (0-based index)",
+                                         metavar="N",
                                          type=int)
 
     # actions
