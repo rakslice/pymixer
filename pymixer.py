@@ -4,7 +4,11 @@ import session_channel_api
 
 from pycaw.pycaw import AudioUtilities
 
-"""A Windows command line utility to set the per-application mixer volume and pan"""
+"""
+A Windows command line utility to set the per-application mixer volume and pan
+"""
+
+# NB: Output format is subject to change.
 
 
 def parse_args():
@@ -138,17 +142,16 @@ def main():
         if options.vol < 0.0 or options.vol > 1.0:
             die("Volume value not in the range 0.0 to 1.0")
 
-    do_list = options.list
+    show_detailed_info = options.list
 
     if not any([options.list, options.pan is not None, options.vol is not None, options.mute, options.unmute,
                 options.left, options.right, options.center]):
         log_stderr("No action selected; listing")
-        do_list = True
+        show_detailed_info = True
 
-    # find sessions to adjust the volume on
+    # find audio sessions to do actions on
 
     matching_sessions = []
-    # devices = AudioUtilities.GetSpeakers()
     sessions = AudioUtilities.GetAllSessions()
     for session in sessions:
         cur_session_matches = True
@@ -206,7 +209,7 @@ def main():
         if not options.quiet:
             print (u'#%d "%s"' % (session_index, session.DisplayName)).encode("utf-8")
 
-        if do_list:
+        if show_detailed_info:
             cur_process_name = None
             if session.Process is not None:
                 cur_process_name = session.Process.name()
