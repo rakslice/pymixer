@@ -1,17 +1,15 @@
 
 """ Wrapper for IChannelAudioVolume """
 
-# TODO push all this up to
+# TODO push all this up to pycaw
 
 import pycaw.pycaw
 
-from ctypes import HRESULT, POINTER, Structure, Union, \
-    c_uint32, c_longlong, c_float
+from ctypes import HRESULT, POINTER, c_uint32, c_float
 from comtypes import IUnknown, GUID, COMMETHOD
 
 
 def get_for_session(session):
-    """:rtype: IChannelAudioVolume"""
     assert isinstance(session, pycaw.pycaw.AudioSession)
     # noinspection PyProtectedMember
     return session._ctl.QueryInterface(IChannelAudioVolume)
