@@ -40,6 +40,18 @@ def parse_args():
                                         help="Pan the audio to POS (-1.0 [left] to 1.0 [right])",
                                         type=float,
                                         metavar="POS")
+    actions_argument_group.add_argument("--left",
+                                        help="Pan the audio left",
+                                        default=False,
+                                        action="store_true")
+    actions_argument_group.add_argument("--right",
+                                        help="Pan the audio left",
+                                        default=False,
+                                        action="store_true")
+    actions_argument_group.add_argument("--center",
+                                        help="Pan the audio to the center",
+                                        default=False,
+                                        action="store_true")
     actions_argument_group.add_argument("--vol", "-v",
                                         help="Set the audio level to VOL (0.0 to 1.0)",
                                         type=float,
@@ -104,16 +116,32 @@ def main():
 
     # validate the options
 
+    if [options.pan is not None, options.left, options.right, options.center].count(True) > 1:
+        die("Choose at most one of pan, left, right, and center actions")
+
+    if options.mute and options.unmute:
+        die("Choose at most one of mute and unmute actions")
+
+    pan_value = None
     if options.pan is not None:
         if options.pan < -1.0 or options.pan > 1.0:
             die("Pan value not in the range -1.0 to 1.0")
+        pan_value = options.pan
+    if options.left:
+        pan_value = -1.0
+    if options.right:
+        pan_value = 1.0
+    if options.center:
+        pan_value = 0.0
+
     if options.vol is not None:
         if options.vol < 0.0 or options.vol > 1.0:
             die("Volume value not in the range 0.0 to 1.0")
 
     do_list = options.list
 
-    if not any([options.list, options.pan is not None, options.vol is not None, options.mute, options.unmute]):
+    if not any([options.list, options.pan is not None, options.vol is not None, options.mute, options.unmute,
+                options.left, options.right, options.center]):
         log_stderr("No action selected; listing")
         do_list = True
 
@@ -197,13 +225,18 @@ def main():
 
             print ""
 
-        if options.pan is not None:
+        if pan_value is not None:
             if num_channels != 2:
                 log_stderr("Session %s doesn't have 2 channels, so can't pan. Skipping it.")
             else:
-                left_channel_level, right_channel_level = convert_pan_to_channel_levels(options.pan)
+                left_channel_level, right_channel_level = convert_pan_to_channel_levels(pan_value)
                 if not options.quiet:
-                    log_stderr("Panning to %s [%s, %s]" % (options.pan, left_channel_level, right_channel_level))
+                    pos_names = {0.0: "center", -1.0: "left", 1.0: "right"}
+                    if pan_value in pos_names:
+                        pos_name = "%s (%s)" % (pos_names[pan_value], pan_value)
+                    else:
+                        pos_name = pan_value
+                    log_stderr("Panning to %s [%s, %s]" % (pos_name, left_channel_level, right_channel_level))
                 channels_api.SetChannelVolume(0, left_channel_level, None)
                 channels_api.SetChannelVolume(1, right_channel_level, None)
 
