@@ -169,15 +169,16 @@ def main():
     for session_index, session in enumerate(matching_sessions):
         simple_audio_volume = session.SimpleAudioVolume
 
-        channels = session_channel_api.get_for_session(session)
+        channels_api = session_channel_api.get_for_session(session)
 
-        num_channels = channels.GetChannelCount()
+        num_channels = channels_api.GetChannelCount()
+
+        if options.index is not None:
+            session_index = options.index
+        if not options.quiet:
+            print (u'#%d "%s"' % (session_index, session.DisplayName)).encode("utf-8")
 
         if do_list:
-            if options.index is not None:
-                session_index = options.index
-            print "#%d" % session_index
-            print (u'"%s"' % session.DisplayName).encode("utf-8")
             cur_process_name = None
             if session.Process is not None:
                 cur_process_name = session.Process.name()
@@ -191,7 +192,7 @@ def main():
             print "  Channels: %d" % num_channels
 
             for i in range(num_channels):
-                channel_volume = channels.GetChannelVolume(i)
+                channel_volume = channels_api.GetChannelVolume(i)
                 print "    Channel %d Level: %0.2f" % (i, channel_volume)
 
             print ""
@@ -203,8 +204,8 @@ def main():
                 left_channel_level, right_channel_level = convert_pan_to_channel_levels(options.pan)
                 if not options.quiet:
                     log_stderr("Panning to %s [%s, %s]" % (options.pan, left_channel_level, right_channel_level))
-                channels.SetChannelVolume(0, left_channel_level, None)
-                channels.SetChannelVolume(1, right_channel_level, None)
+                channels_api.SetChannelVolume(0, left_channel_level, None)
+                channels_api.SetChannelVolume(1, right_channel_level, None)
 
         if options.vol is not None:
             if not options.quiet:
