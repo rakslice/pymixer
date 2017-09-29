@@ -17,6 +17,7 @@ def get_for_session(session):
 
 class IChannelAudioVolume(IUnknown):
     _iid_ = GUID('{1c158861-b533-4b30-b1cf-e853e51c59b8}')
+    # GUID courtesy of https://github.com/wine-mirror/wine/blob/master/include/audioclient.idl
     _methods_ = (
         # HRESULT GetChannelCount(
         # [out] UINT32 *pdwCount
