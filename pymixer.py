@@ -158,8 +158,11 @@ def main():
             die("Multiple matching sessions found")
 
     if options.index is not None:
-        indexed_session = matching_sessions[options.index]
-        matching_sessions = [indexed_session]
+        if 0 <= options.index < len(matching_sessions):
+            indexed_session = matching_sessions[options.index]
+            matching_sessions = [indexed_session]
+        else:
+            die("No matching session #%d" % options.index)
 
     # take any specified actions on the matched sessions
 
