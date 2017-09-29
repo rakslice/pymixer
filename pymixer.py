@@ -80,8 +80,11 @@ def die(msg):
 
 
 def convert_pan_to_channel_levels(pan):
-    # convert the pan [-1.0 .. 1.0] to channel values
-
+    """
+    Convert the pan to channel level values
+    :type pan: float
+    :param pan: [-1.0 .. 1.0]
+    """
     # 1.0 =>  (0, 1)
     # 0.5 =>  (0.5, 1)
     # 0.20 => (0.8, 1)
