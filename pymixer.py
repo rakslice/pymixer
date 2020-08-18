@@ -49,7 +49,7 @@ def parse_args():
                                         default=False,
                                         action="store_true")
     actions_argument_group.add_argument("--right",
-                                        help="Pan the audio left",
+                                        help="Pan the audio right",
                                         default=False,
                                         action="store_true")
     actions_argument_group.add_argument("--center",
